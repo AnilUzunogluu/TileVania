@@ -16,7 +16,8 @@ GameObject:
   - component: {fileID: 2760018319455175297}
   - component: {fileID: 122042126}
   - component: {fileID: 1126784027336770648}
-  m_Layer: 0
+  - component: {fileID: 6462484078855427568}
+  m_Layer: 8
   m_Name: Red (Player)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +98,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1720797743
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: -1443373191, guid: 80e9510c9e202e3478c698c10ae3bf4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -175,6 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 8
   jumpSpeed: 27
+  isClimbing: 0
 --- !u!114 &122042126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,3 +205,19 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.03}
   m_Size: {x: 0.57, y: 0.85}
   m_Direction: 0
+--- !u!58 &6462484078855427568
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272736785817068041}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.23}
+  serializedVersion: 2
+  m_Radius: 0.24

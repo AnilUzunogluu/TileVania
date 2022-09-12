@@ -1,6 +1,4 @@
 using System;
-using System.ComponentModel.Design;
-using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vector2 = UnityEngine.Vector2;
@@ -8,13 +6,17 @@ using Vector2 = UnityEngine.Vector2;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D playerrb;
-    private CapsuleCollider2D capsuleCollider;
+    private CapsuleCollider2D bodyCollider;
+    private CircleCollider2D feetCollider;
     Vector2 moveInput;
 
     public float GetScaleX => Mathf.Sign(playerrb.velocity.x);
 
     [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float jumpSpeed = 5f;
+
+    private float basegravity;
+    public bool isClimbing;
 
 
     public event Action OnRun;
@@ -25,7 +27,9 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         playerrb = GetComponent<Rigidbody2D>();
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        bodyCollider = GetComponent<CapsuleCollider2D>();
+        feetCollider = GetComponent<CircleCollider2D>();
+        basegravity = playerrb.gravityScale;
     }
 
     // Update is called once per frame
@@ -43,7 +47,8 @@ public class PlayerMovement : MonoBehaviour
     void OnJump(InputValue value)
     {
         //Maybe make it so that the player can jump on the ladders too?
-        if (value.isPressed && capsuleCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        // bug bodycollider shoul be feet collider. Fix after testing.
+        if (value.isPressed && bodyCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             playerrb.velocity += new Vector2(0f, jumpSpeed);
         }
@@ -58,10 +63,19 @@ public class PlayerMovement : MonoBehaviour
 
     void Climb()
     {
-        if (!capsuleCollider.IsTouchingLayers(LayerMask.GetMask("Climbing"))) return;
-        Vector2 playerVelocity = new Vector2(playerrb.velocity.x, moveInput.y * moveSpeed);
-        playerrb.velocity = playerVelocity;
-        OnClimb?.Invoke();
+        // bug bodycollider shoul be feet collider. Fix after testing.
+        if (bodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
+        {
+            playerrb.gravityScale = 0;
+            Vector2 playerVelocity = new Vector2(playerrb.velocity.x, moveInput.y * moveSpeed);
+            playerrb.velocity = playerVelocity;
+            OnClimb?.Invoke();
+        }
+        else
+        {
+            playerrb.gravityScale = basegravity;
+        }
+
     }
     
     public bool CheckHorizontalMovement()
@@ -71,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool CheckVerticalMovement()
     {
-        return Mathf.Abs(playerrb.velocity.y) > Mathf.Epsilon;
+        return isClimbing = Mathf.Abs(playerrb.velocity.y) > Mathf.Epsilon;
     }
     
     

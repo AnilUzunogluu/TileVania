@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AnimatonManager : MonoBehaviour
@@ -18,15 +16,10 @@ public class AnimatonManager : MonoBehaviour
         playerMovementScript.OnClimb += SetClimbAnimation;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-       
-    }
-
     void SetRunAnimation()
     {
         playerAnimator.SetBool("isRunning", playerMovementScript.CheckHorizontalMovement());
+        playerMovementScript.isClimbing = false;
     }
     
     void FlipSprite()
@@ -36,9 +29,10 @@ public class AnimatonManager : MonoBehaviour
             transform.localScale = new Vector2(playerMovementScript.GetScaleX, 1f);
         }
     }
-
+    
     void SetClimbAnimation()
     {
+        //Bug: if player gets out from the top of the ladder before climbing animaton ends they get stuck in the climbing animation.
         playerAnimator.SetBool("isClimbing", playerMovementScript.CheckVerticalMovement());
     }
 }
