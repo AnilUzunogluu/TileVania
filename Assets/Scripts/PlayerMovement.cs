@@ -9,11 +9,19 @@ public class PlayerMovement : MonoBehaviour
     private CapsuleCollider2D bodyCollider;
     private CircleCollider2D feetCollider;
     Vector2 moveInput;
+    private bool isAlive = true;
+
+    public bool Isalive
+    {
+        get => isAlive;
+        private set => isAlive = value;
+    }
 
     public float GetScaleX => Mathf.Sign(playerrb.velocity.x);
 
     [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float jumpSpeed = 5f;
+    [SerializeField] private Vector2 deathForce = new Vector2(10f, 10f);
 
     private float basegravity;
     public bool isClimbing;
@@ -21,7 +29,9 @@ public class PlayerMovement : MonoBehaviour
 
     public event Action OnRun;
     public event Action OnClimb;
-    
+    public event Action OnClimbEnd;
+    public event Action OnDeath;
+    public event Action OnShoot;
     
     // Start is called before the first frame update
     void Start()
@@ -35,8 +45,12 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!isAlive) return;
+        
         Run();
         Climb();
+        Die();
+
     }
 
     void OnMove(InputValue value)
@@ -48,10 +62,17 @@ public class PlayerMovement : MonoBehaviour
     {
         //Maybe make it so that the player can jump on the ladders too?
         // bug bodycollider shoul be feet collider. Fix after testing.
-        if (value.isPressed && bodyCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+
+        if (value.isPressed && bodyCollider.IsTouchingLayers(LayerMask.GetMask("Ground")) && isAlive)
         {
             playerrb.velocity += new Vector2(0f, jumpSpeed);
         }
+    }
+
+    void OnFire()
+    {
+        if (!isAlive) return;
+        OnShoot?.Invoke();
     }
 
     void Run()
@@ -63,18 +84,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Climb()
     {
-        // bug bodycollider shoul be feet collider. Fix after testing.
-        if (bodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
-        {
-            playerrb.gravityScale = 0;
-            Vector2 playerVelocity = new Vector2(playerrb.velocity.x, moveInput.y * moveSpeed);
-            playerrb.velocity = playerVelocity;
-            OnClimb?.Invoke();
-        }
-        else
+        // bug bodycollider shoul be feet collider. and add No Friction material to collider. Fix after testing.
+
+        if (!bodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
         {
             playerrb.gravityScale = basegravity;
+            OnClimbEnd?.Invoke(); //temporary fix to the climbing animation bug
+            return;
         }
+        playerrb.gravityScale = 0;
+        Vector2 playerVelocity = new Vector2(playerrb.velocity.x, moveInput.y * moveSpeed);
+        playerrb.velocity = playerVelocity;
+        OnClimb?.Invoke();
 
     }
     
@@ -87,6 +108,16 @@ public class PlayerMovement : MonoBehaviour
     {
         return isClimbing = Mathf.Abs(playerrb.velocity.y) > Mathf.Epsilon;
     }
+
+    private void Die()
+    {
+        if (bodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemies")) || 
+            bodyCollider.IsTouchingLayers(LayerMask.GetMask("Hazards")))
+        {
+            isAlive = false;
+            OnDeath?.Invoke();
+            playerrb.velocity = deathForce;
+        }
     
-    
+    }
 }
