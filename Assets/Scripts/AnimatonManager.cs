@@ -16,6 +16,7 @@ public class AnimatonManager : MonoBehaviour
         playerMovementScript.OnClimb += SetClimbAnimationTrue;
         playerMovementScript.OnClimbEnd += SetClimbAnimationFalse;
         playerMovementScript.OnDeath += setDeathAnimation;
+        playerMovementScript.OnShoot += SetShootingAnimation;
     }
 
     void SetRunAnimation()
@@ -46,5 +47,10 @@ public class AnimatonManager : MonoBehaviour
     void setDeathAnimation()
     {
         playerAnimator.SetTrigger("Dying");
+    }
+
+    void SetShootingAnimation()
+    {
+        playerAnimator.SetTrigger("Shooting");
     }
 }
