@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,24 +9,23 @@ public class BulletSpawner : MonoBehaviour
 
     [SerializeField] private Transform spawnLocation;
 
-    [SerializeField] private float bulletSpawnDelay = 0.5f;
+    [SerializeField] private float bulletSpawnDelay = 0.1f;
 
     private PlayerMovement playerMovementScript;
 
-    // Start is called before the first frame update
     void Start()
     {
         playerMovementScript = GetComponent<PlayerMovement>();
-        playerMovementScript.OnShoot += DelayedShoot;
+        playerMovementScript.OnShoot += () => {Invoke(nameof(Shoot), bulletSpawnDelay);};
+    }
+    
+    void Shoot()
+    {
+        Utilities.DelayedExecute(this, bulletSpawnDelay,
+            () => Instantiate(bullet, spawnLocation.position, transform.rotation));
     }
 
-    private void Shoot()
-    {
-        Instantiate(bullet, spawnLocation.position, transform.rotation);
-    }
-
-    private void DelayedShoot()
-    {
-        Invoke(nameof(Shoot), bulletSpawnDelay);
-    }
+    
+    
+    
 }

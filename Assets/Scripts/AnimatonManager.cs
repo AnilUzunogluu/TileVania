@@ -13,36 +13,31 @@ public class AnimatonManager : MonoBehaviour
         playerMovementScript = GetComponent<PlayerMovement>();
         playerMovementScript.OnRun += FlipSprite;
         playerMovementScript.OnRun += SetRunAnimation;
-        playerMovementScript.OnClimb += SetClimbAnimationTrue;
-        playerMovementScript.OnClimbEnd += SetClimbAnimationFalse;
+        playerMovementScript.OnClimb += SetClimbAnimation;
         playerMovementScript.OnDeath += setDeathAnimation;
         playerMovementScript.OnShoot += SetShootingAnimation;
     }
 
-    void SetRunAnimation()
+    void SetRunAnimation(bool value)
     {
-        playerAnimator.SetBool("isRunning", playerMovementScript.CheckHorizontalMovement());
+        playerAnimator.SetBool("isRunning", value);
         playerMovementScript.isClimbing = false;
     }
     
-    void FlipSprite()
+    void FlipSprite(bool value)
     {
-        if (playerMovementScript.CheckHorizontalMovement())
+        if (value)
         {
             transform.localScale = new Vector2(playerMovementScript.GetScaleX, 1f);
         }
     }
     
-    void SetClimbAnimationTrue()
+    void SetClimbAnimation(bool value)
     {
         //Bug: if player gets out from the top of the ladder before climbing animaton ends they get stuck in the climbing animation.
-        playerAnimator.SetBool("isClimbing", true);
+        playerAnimator.SetBool("isClimbing", value);
     }
-    void SetClimbAnimationFalse()
-    {
-        //Bug: if player gets out from the top of the ladder before climbing animaton ends they get stuck in the climbing animation.
-        playerAnimator.SetBool("isClimbing", false);
-    }
+    
     
     void setDeathAnimation()
     {

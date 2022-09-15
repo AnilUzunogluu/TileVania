@@ -27,11 +27,11 @@ public class PlayerMovement : MonoBehaviour
     public bool isClimbing;
 
 
-    public event Action OnRun;
-    public event Action OnClimb;
-    public event Action OnClimbEnd;
+    public event Action<bool> OnRun;
+    public event Action<bool> OnClimb;
     public event Action OnDeath;
     public event Action OnShoot;
+    public event Action OnJumping;
     
     // Start is called before the first frame update
     void Start()
@@ -66,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
         if (value.isPressed && bodyCollider.IsTouchingLayers(LayerMask.GetMask("Ground")) && isAlive)
         {
             playerrb.velocity += new Vector2(0f, jumpSpeed);
+            OnJumping?.Invoke();
         }
     }
 
@@ -79,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 playerVelocity = new Vector2(moveInput.x * moveSpeed, playerrb.velocity.y);
         playerrb.velocity = playerVelocity;
-        OnRun?.Invoke();
+        OnRun?.Invoke(CheckHorizontalMovement());
     }
 
     void Climb()
@@ -89,14 +90,13 @@ public class PlayerMovement : MonoBehaviour
         if (!bodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
         {
             playerrb.gravityScale = basegravity;
-            OnClimbEnd?.Invoke(); //temporary fix to the climbing animation bug
+            OnClimb?.Invoke(false);
             return;
         }
         playerrb.gravityScale = 0;
         Vector2 playerVelocity = new Vector2(playerrb.velocity.x, moveInput.y * moveSpeed);
         playerrb.velocity = playerVelocity;
-        OnClimb?.Invoke();
-
+        OnClimb?.Invoke(CheckVerticalMovement());
     }
     
     public bool CheckHorizontalMovement()
@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
             isAlive = false;
             OnDeath?.Invoke();
             playerrb.velocity = deathForce;
+            FindObjectOfType<GameSession>().ComputePlayerLives();
         }
-    
     }
 }
