@@ -233,7 +233,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 1272736785817068041}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 13b5c176e054a6244a8b5c1f64e0050e, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -414,3 +414,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPickup: {fileID: 8300000, guid: cf008227325eb0f4092b5f9164b0e821, type: 3}
   jump: {fileID: 8300000, guid: dee0709ee2c4b5a46aa3845436c90b3e, type: 3}
+  shotFired: {fileID: 8300000, guid: 23244088ca67240418323fd4c288a4be, type: 3}
+  gotHit: {fileID: 8300000, guid: 95bc829c0f8f03c41ae9a08463417f49, type: 3}

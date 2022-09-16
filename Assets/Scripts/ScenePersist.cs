@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ScenePersist : MonoBehaviour
 {
-    // Start is called before the first frame update
     private void Awake()
     {
         int numOfScenePersists = FindObjectsOfType<ScenePersist>().Length;
@@ -16,5 +13,10 @@ public class ScenePersist : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
         }
+    }
+
+    public void ResetScenePersist()
+    {
+        Destroy(gameObject);
     }
 }

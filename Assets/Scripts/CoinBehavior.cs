@@ -1,19 +1,17 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CoinBehavior : MonoBehaviour
 {
     [SerializeField] private int PointsToAdd = 100;
+
+    private bool wasCollected = false;
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("Player"))
+        if (col.CompareTag("Player") && !wasCollected)
         {
+            wasCollected = true;
             var gameSession = GameSession.Instance;
             gameSession.AddToScore(PointsToAdd);
-            gameSession.IncrementCoin();
             Destroy(gameObject);
         }
         

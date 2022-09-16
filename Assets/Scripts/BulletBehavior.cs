@@ -8,7 +8,7 @@ public class BulletBehavior : MonoBehaviour
     private Rigidbody2D bulletrb;
     private float xSpeed;
     private PlayerMovement player;
-
+    
     private void Start()
     {
         bulletrb = GetComponent<Rigidbody2D>();
@@ -27,6 +27,7 @@ public class BulletBehavior : MonoBehaviour
     {
         if (col.CompareTag("Enemy"))
         {
+            GameSession.Instance.EnemyHit();
             Destroy(col.gameObject);
             Destroy(gameObject);
         }

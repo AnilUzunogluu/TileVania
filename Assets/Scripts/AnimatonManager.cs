@@ -6,45 +6,43 @@ public class AnimatonManager : MonoBehaviour
     private Animator playerAnimator;
     private PlayerMovement playerMovementScript;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         playerAnimator = GetComponent<Animator>();
         playerMovementScript = GetComponent<PlayerMovement>();
         playerMovementScript.OnRun += FlipSprite;
         playerMovementScript.OnRun += SetRunAnimation;
         playerMovementScript.OnClimb += SetClimbAnimation;
-        playerMovementScript.OnDeath += setDeathAnimation;
+        playerMovementScript.OnDeath += SetDeathAnimation;
         playerMovementScript.OnShoot += SetShootingAnimation;
     }
 
-    void SetRunAnimation(bool value)
+    private void SetRunAnimation(bool value)
     {
         playerAnimator.SetBool("isRunning", value);
         playerMovementScript.isClimbing = false;
     }
-    
-    void FlipSprite(bool value)
+
+    private void FlipSprite(bool value)
     {
         if (value)
         {
             transform.localScale = new Vector2(playerMovementScript.GetScaleX, 1f);
         }
     }
-    
-    void SetClimbAnimation(bool value)
+
+    private void SetClimbAnimation(bool value)
     {
-        //Bug: if player gets out from the top of the ladder before climbing animaton ends they get stuck in the climbing animation.
         playerAnimator.SetBool("isClimbing", value);
     }
-    
-    
-    void setDeathAnimation()
+
+
+    private void SetDeathAnimation()
     {
         playerAnimator.SetTrigger("Dying");
     }
 
-    void SetShootingAnimation()
+    private void SetShootingAnimation()
     {
         playerAnimator.SetTrigger("Shooting");
     }

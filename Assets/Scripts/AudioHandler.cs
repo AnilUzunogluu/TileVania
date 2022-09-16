@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class AudioHandler : MonoBehaviour
@@ -6,15 +5,20 @@ public class AudioHandler : MonoBehaviour
     private AudioSource audioSource;
     [SerializeField] private AudioClip coinPickup;
     [SerializeField] private AudioClip jump;
+    [SerializeField] private AudioClip shotFired;
+    [SerializeField] private AudioClip gotHit;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
 
-        FindObjectOfType<GameSession>().OnCoinPickup += PLayCoinPickupClip;
+        GameSession.Instance.OnCoinPickup += PLayCoinPickupClip;
+        GameSession.Instance.OnEnemyHit += PlayEnemyHitClip;
 
         FindObjectOfType<PlayerMovement>().OnJumping += PlayJumpClip;
-        
+        FindObjectOfType<PlayerMovement>().OnShoot += PlayShootClip;
+
+
     }
 
     void PLayCoinPickupClip()
@@ -25,5 +29,16 @@ public class AudioHandler : MonoBehaviour
     void PlayJumpClip()
     {
         audioSource.PlayOneShot(jump);
+    }
+
+    void PlayShootClip()
+    {
+        audioSource.PlayOneShot(shotFired);
+    }
+
+    void PlayEnemyHitClip()
+    {
+        audioSource.PlayOneShot(gotHit);
+
     }
 }

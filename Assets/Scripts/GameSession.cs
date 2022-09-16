@@ -1,25 +1,29 @@
 using System;
 using System.Collections;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameSession : MonoBehaviour
 {
     public static GameSession Instance;
     [SerializeField] private int playerLives = 3;
-    [SerializeField] private int coins;
     
     [SerializeField] private TextMeshProUGUI livesText;
     [SerializeField] private TextMeshProUGUI scoreText;
 
     private PlayerMovement playerMovement;
-    private int score = 0;
+    private int score;
+
+    public int Score
+    {
+        get => score;
+        set => score = value;
+    }
     
     public event Action OnCoinPickup;
+    public event Action OnEnemyHit;
+
 
     private void Awake()
     {
@@ -40,6 +44,14 @@ public class GameSession : MonoBehaviour
         livesText.text = playerLives.ToString();
         scoreText.text = score.ToString();
     }
+    //Testing feature. Delete method later.
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            LoadCurrentScene();
+        }
+    }
 
     public void ComputePlayerLives()
     {
@@ -50,44 +62,23 @@ public class GameSession : MonoBehaviour
         }
         else
         {
-            LoadScene(0);
-            var scenePersist = FindObjectOfType<ScenePersist>();
-            Destroy(scenePersist.gameObject);
-            Destroy(gameObject);
+            ResetGame();
         }
     }
 
     public void AddToScore(int addAmount)
     {
+        OnCoinPickup?.Invoke();
         score += addAmount;
-        scoreText.text = score.ToString();
+        DisplayTexts();
     }
     
     private IEnumerator TakeLife()
     {
         playerLives--;
-        livesText.text = playerLives.ToString();
+        DisplayTexts();
         yield return  new WaitForSecondsRealtime(0.5f);
         LoadCurrentScene();
-    }
-
-    public void IncrementCoin()
-    {
-        coins++;
-        OnCoinPickup?.Invoke();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            LoadCurrentScene();
-        }
-    }
-
-    public void ResetEvents()
-    {
-        OnCoinPickup = null;
     }
 
     public void LoadCurrentScene()
@@ -100,5 +91,29 @@ public class GameSession : MonoBehaviour
     {
         ResetEvents();
         SceneManager.LoadScene(value);
+    }
+
+    public void EnemyHit()
+    {
+        OnEnemyHit?.Invoke();
+    }
+    
+    public void ResetEvents()
+    {
+        OnCoinPickup = null;
+        OnEnemyHit = null;
+    }
+
+    public void DisplayTexts()
+    {
+        livesText.text = playerLives.ToString();
+        scoreText.text = score.ToString();
+    }
+
+    public void ResetGame()
+    {
+        LoadScene(0);
+        FindObjectOfType<ScenePersist>().ResetScenePersist();
+        Destroy(gameObject);
     }
 }
